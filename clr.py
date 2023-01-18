@@ -43,6 +43,7 @@ def transform_wave(func):
 def saw(start, i, c_len):
     return abs(start - (i%c_len) / (c_len-1))
 
+# FIXME screwy
 @transform_wave
 def tri(start, i, c_len):
     return abs(1-start - abs(i%(2*c_len-1) - (c_len-1)) / (c_len-1))
