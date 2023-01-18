@@ -76,7 +76,7 @@ print(", ".join(rates_str))
 
 if PLOT == 1:
     import matplotlib.pyplot as plt
-    _, ax = plt.subplots()
-    ax.plot(range(1, len(rates)+1), rates)
-    ax.grid()
+    plt.plot(range(1, len(rates)+1), rates)
+    plt.grid()
+    plt.title(f"Avg: {sum(rates)/len(rates)}")
     plt.show()
