@@ -52,9 +52,6 @@ if START == 2:
     firstwave = lambda i: tri(0, i, ceil(CYCLE_LEN/2))
     rates = [MIN * (1 - firstwave(i)) + MAX * firstwave(i) for i in range(CYCLE_LEN-1)] + rates;
     START=1
-    DECAY_OFF=1 # FIXME broken for odd CYCLE_LEN
-else:
-    DECAY_OFF=0
 
 if RESTARTS == 1:
     FULL_CYCLE_LEN=CYCLE_LEN
@@ -65,13 +62,13 @@ else:
     STEPS=FULL_CYCLE_LEN*CYCLES+1
     wave = lambda i: tri(START, i, CYCLE_LEN)
 
-rates += [MIN * (1 - wave(i)) + MAX * wave(i) for i in range(STEPS)]
+decay = lambda v,i: v / (1 + i//FULL_CYCLE_LEN * DECAY)
+
+rates += [decay(MIN,i) * (1 - wave(i)) + decay(MAX,i) * wave(i) for i in range(STEPS)]
 
 if ONECYCLE > 0:
     wave_1cyc = lambda i: tri(0, i, ONECYCLE+1)
     rates += [MIN * (1 - wave_1cyc(i)) + ONECYCLE_MIN * wave_1cyc(i) for i in range(1, ONECYCLE+1)]
-elif DECAY > 0:
-    rates = [lr / (1 + i//FULL_CYCLE_LEN * DECAY) for (i,lr) in enumerate(rates, DECAY_OFF)]
 
 rates_str = [f"{x:.2e}:{i+1+STEP_OFF}" for (i,x) in enumerate(rates)]
 rates_str[-1] = rates_str[-1].split(":")[0] # coast on final LR
