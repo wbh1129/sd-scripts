@@ -8,7 +8,7 @@ loss, learn = csv.plot("step", ["loss","learn_rate"], style=[":",""],
                        subplots=True, sharex=False, grid=True)
 
 avg      = lambda arr: sum(arr)/len(arr)
-avg_loss = lambda r: [avg(csv["loss"][max(i-r,0) : min(i+r,len(csv["loss"]))])
+avg_loss = lambda r: [avg(csv["loss"][max(i-r,0) : min(i+r, len(csv["loss"])-1)])
                       for i in range(len(csv["loss"]))]
 
 loss.plot(csv["step"], avg_loss(5), "r", linewidth=2, label="avg5")
