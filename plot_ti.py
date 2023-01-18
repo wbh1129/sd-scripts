@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# plots textual_inversion_loss.csv with matplotlib
 
 import pandas as pd
 import matplotlib.pyplot as plt
