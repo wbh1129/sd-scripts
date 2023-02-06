@@ -4,24 +4,26 @@
 from math import *
 import argparse
 
-DEFAULT_MAX=2e-4
 parser = argparse.ArgumentParser(
         description="cyclical learning rates for Auto1111 training",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
 )
-parser.add_argument("--max", default=DEFAULT_MAX, type=float, help="cycle peak value")
-parser.add_argument("--min", default=DEFAULT_MAX/6, type=float, help="cycle minimum value, recommended max/6")
+parser.add_argument("--max", default=2e-4, type=float, help="cycle peak value")
+parser.add_argument("--min", default=6, type=float, help="cycle minimum value, as a fraction of --max")
 parser.add_argument("--len", default=10, type=int, help="cycle length, recommended (2-10) * steps_per_epoch")
 parser.add_argument("--cycles", default=50, type=int, help="quantity of cycles to generate")
 parser.add_argument("--decay", default=0.0, type=float, help="rate of decay")
 parser.add_argument("--no-restarts", action="store_true", help="do full waves instead of half")
 parser.add_argument("--start", default=2, type=int, help="wave start point; 0 for min; 1 for max; 2 for full wave followed by max")
 parser.add_argument("--onecycle", default=0, type=int, help="1cycle phase length, 0 to disable")
-parser.add_argument("--onecycle-min", default=DEFAULT_MAX/100, type=float, help="1cycle phase minimum")
+parser.add_argument("--onecycle-min", default=100, type=float, help="1cycle phase minimum, as a fraction of --max")
 parser.add_argument("--step-start", default=0, type=int, help="starting point for steps, useful for resuming training w/ a new schedule")
 parser.add_argument("--wave", default=1, type=int, help="0 for triangle; 1 for sine")
 parser.add_argument("--plot", action="store_true", help="show a plot of the LR schedule w/ matplotlib")
 ARGS = parser.parse_args()
+
+ARGS.min = ARGS.max / ARGS.min
+ARGS.onecycle_min = ARGS.max / ARGS.onecycle_min
 
 # TODO add variable length cycles
 
