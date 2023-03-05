@@ -15,6 +15,7 @@ parser.add_argument("--cycles", default=50, type=int, help="quantity of cycles t
 parser.add_argument("--decay", default=0.0, type=float, help="rate of decay")
 parser.add_argument("--no-restarts", action="store_true", help="do full waves instead of half")
 parser.add_argument("--start", default=2, type=int, help="wave start point; 0 for min; 1 for max; 2 for full wave followed by max")
+parser.add_argument("--start-len", default=1, type=int, help="length of first wave if --start=2 (as a multiple of --len)")
 parser.add_argument("--onecycle", default=0, type=int, help="1cycle phase length, 0 to disable")
 parser.add_argument("--onecycle-min", default=10, type=float, help="1cycle phase minimum (as a fraction of --min), recommended 10-100 ")
 parser.add_argument("--step-start", default=0, type=int, help="starting point for steps, useful for resuming training w/ a new schedule")
@@ -53,8 +54,8 @@ def tri(start, i, c_len):
 rates = []
 
 if ARGS.start == 2:
-    firstwave = lambda i: tri(0, i, ceil(ARGS.len/2))
-    rates = [ARGS.min * (1 - firstwave(i)) + ARGS.max * firstwave(i) for i in range(ARGS.len-1)] + rates;
+    firstwave = lambda i: tri(0, i, ceil(ARGS.len/2)*ARGS.start_len)
+    rates = [ARGS.min * (1 - firstwave(i)) + ARGS.max * firstwave(i) for i in range(ARGS.len * ARGS.start_len - 1)] + rates;
     ARGS.start=1
 
 if ARGS.no_restarts:
