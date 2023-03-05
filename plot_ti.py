@@ -8,12 +8,13 @@ csv = pd.read_csv("textual_inversion_loss.csv")
 loss, learn = csv.plot("step", ["loss","learn_rate"], style=[":",""],
                        subplots=True, sharex=False, grid=True)
 
-avg      = lambda arr: sum(arr)/len(arr)
-avg_loss = lambda r: [avg(csv["loss"][max(i-r,0):i+r+1])
-                      for i in range(len(csv["loss"]))]
+avg = lambda arr: sum(arr)/len(arr)
+avg_loss = lambda r: [avg(csv["loss"][max(i-r,0):i+r+1]) for i in range(len(csv["loss"]))]
+avg_loss_unidirectional = lambda r: [avg(csv["loss"][max(i-r,0):i+1]) for i in range(len(csv["loss"]))]
+recent_min = lambda r: [min(csv["loss"][max(i-r,0):i+1]) for i in range(len(csv["loss"]))]
 
-loss.plot(csv["step"], avg_loss(3), "r", linewidth=2, label="avg3")
-loss.plot(csv["step"], avg_loss(10), "b", linewidth=2, label="avg10")
+loss.plot(csv["step"], avg_loss_unidirectional(3), "b", linewidth=2, label="avg")
+loss.plot(csv["step"], recent_min(3), "r", linewidth=2, label="min")
 loss.set_title(f"Min: {min(csv['loss'])}, Max: {max(csv['loss'])}, Avg: {avg(csv['loss'])}")
 loss.legend()
 
