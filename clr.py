@@ -27,6 +27,7 @@ ARGS.min = ARGS.max / ARGS.min
 ARGS.onecycle_min = ARGS.min / ARGS.onecycle_min
 
 # TODO add variable length cycles
+# TODO maybe refactor so the rates array is an array of arrays
 
 if ARGS.onecycle > 0:
     ARGS.cycles=1
@@ -69,7 +70,8 @@ else:
 
 decay = lambda v,i: v / (1 + i//FULL_CYCLE_LEN * ARGS.decay)
 
-rates += [decay(ARGS.min,i) * (1 - wave(i)) + decay(ARGS.max,i) * wave(i) for i in range(STEPS)]
+rates += [decay(ARGS.min,i) * (1 - wave(i)) + decay(ARGS.max,i) * wave(i)
+          for i in range(FULL_CYCLE_LEN * int(bool(len(rates))), STEPS - len(rates) - 1)]
 
 if ARGS.onecycle > 0:
     wave_1cyc = lambda i: tri(0, i, ARGS.onecycle+1)
