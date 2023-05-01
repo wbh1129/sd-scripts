@@ -3,8 +3,14 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import sys
 
-csv = pd.read_csv("textual_inversion_loss.csv")
+if len(sys.argv) > 1:
+    file = sys.argv[1]
+else:
+    file = "textual_inversion_loss.csv"
+
+csv = pd.read_csv(file)
 loss, learn = csv.plot("step", ["loss","learn_rate"], style=[":",""],
                        subplots=True, sharex=False, grid=True)
 
