@@ -14,6 +14,7 @@ parser.add_argument("--len", default=10, type=int, help="cycle length, recommend
 parser.add_argument("--cycles", default=50, type=int, help="quantity of cycles to generate")
 parser.add_argument("--decay", default=0.0, type=float, help="rate of decay")
 parser.add_argument("--no-restarts", action="store_true", help="do full waves instead of half")
+parser.add_argument("--range", action="store_true", help="do a range test, starting from --min and ending at --max")
 parser.add_argument("--start", default=2, type=int, help="wave start point; 0 for min; 1 for max; 2 for full wave followed by max")
 parser.add_argument("--start-len", default=1, type=int, help="length of first wave if --start=2 (as a multiple of --len)")
 parser.add_argument("--onecycle", default=0, type=int, help="1cycle phase length, 0 to disable")
@@ -23,8 +24,15 @@ parser.add_argument("--wave", default=1, type=int, help="0 for triangle; 1 for s
 parser.add_argument("--plot", action="store_true", help="show a plot of the LR schedule w/ matplotlib")
 ARGS = parser.parse_args()
 
-ARGS.min = ARGS.max / ARGS.min
-ARGS.onecycle_min = ARGS.min / ARGS.onecycle_min
+if ARGS.range:
+    ARGS.start = ARGS.wave = 0
+    ARGS.len = ARGS.cycles
+    ARGS.cycles = 1
+    # --start-len acts as a flat start area for --range
+    ARGS.step_start += ARGS.start_len - 1
+else:
+    ARGS.min = ARGS.max / ARGS.min
+    ARGS.onecycle_min = ARGS.min / ARGS.onecycle_min
 
 # TODO add variable length cycles
 # TODO maybe refactor so the rates array is an array of arrays
@@ -78,7 +86,11 @@ if ARGS.onecycle > 0:
     rates += [ARGS.min * (1 - wave_1cyc(i)) + ARGS.onecycle_min * wave_1cyc(i) for i in range(1, ARGS.onecycle+1)]
 
 rates_str = [f"{x:.2e}:{i+1+ARGS.step_start}" for (i,x) in enumerate(rates)]
+
+if ARGS.range:
+    rates_str[0] = ":".join([rates_str[0].split(":")[0], str(ARGS.start_len)])
 rates_str[-1] = rates_str[-1].split(":")[0] # coast on final LR
+
 print(", ".join(rates_str))
 
 if ARGS.plot:
